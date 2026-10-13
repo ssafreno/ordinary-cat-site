@@ -141,6 +141,44 @@ export const script = {
   'hint.lure.1': [c("The subject stands in the circle. And there's no one here but you and an ordinary cat.")],
   'hint.lure.2': [c("An ordinary cat would never be bribed into a circle. Not by anything you've been carrying since the study.")],
   'hint.lure.3': [c('Use the sardines.'), c('…On the circle. Obviously. I am merely making conversation.')],
+  // Lure hints when the player is NOT carrying the sardines (room3.hintVariant). ADDED BY loose-ends pass.
+  //   nodesk: study drawer still locked, key in pocket   nokey: drawer locked, no key   notin: drawer open, tin left in it
+  'hint.lure.nodesk.1': [
+    c("The subject stands in the circle. And there's no one here but you and an ordinary cat."),
+    c("An ordinary cat who would need a very good reason. You don't appear to be carrying one."),
+  ],
+  'hint.lure.nodesk.2': [
+    c('There was a tin in the study. In the desk drawer. The locked one.'),
+    c("You have the key. You've had it for some time."),
+  ],
+  'hint.lure.nodesk.3': [
+    c('Go back to the study. Use the brass key on the desk drawer. Bring the sardines.'),
+    c('I will be here. Being ordinary. Not hungry.'),
+  ],
+  'hint.lure.nokey.1': [
+    c("The subject stands in the circle. And there's no one here but you and an ordinary cat."),
+    c("An ordinary cat who would need a very good reason. You don't appear to be carrying one."),
+  ],
+  'hint.lure.nokey.2': [
+    c("There was a tin in the study desk. Locked drawer. The key is in the clock, I'm told."),
+    c('The portrait knows the time. He always was punctual.'),
+  ],
+  'hint.lure.nokey.3': [
+    c('Go back to the study. Set the clock to seven thirty-five. Take the key. Open the desk drawer.'),
+    c("Bring the sardines. Then we'll talk. Briefly."),
+  ],
+  'hint.lure.notin.1': [
+    c("The subject stands in the circle. And there's no one here but you and an ordinary cat."),
+    c("An ordinary cat who would need a very good reason. You don't appear to be carrying one."),
+  ],
+  'hint.lure.notin.2': [
+    c('There was a tin in the study desk drawer. You opened the drawer and left the tin.'),
+    c('I noticed. Cats notice.'),
+  ],
+  'hint.lure.notin.3': [
+    c('Go back to the study. The sardines are still in the desk drawer. Bring them.'),
+    c('…On the circle, when you have them. Obviously.'),
+  ],
 
   // Idle — escalating slips
   'idle.room1': [
@@ -175,21 +213,21 @@ export const script = {
   'react.clock.solved': [c('Seven thirty-five. Breakfast. He never missed it. I hear.')],
   'react.clock.wrong': [
     [c('That is a time. Not the time, but a time.')],
-    [c("Clocks are not dartboards. Look for someone who's holding the right answer.")],
-    [c("I'd tell you to look at the portrait, but I'm only a cat. I don't notice portraits.")],
+    [c("Clocks are not dartboards. Though you're welcome to keep throwing.")],
+    [c("Wrong again. Not that I'm counting. Cats can't count. We only get as far as dinner.")],
   ],
   'react.desk.solved': [c('It sticks. You have to lift and— I imagine.'), c("Cats don't use drawers.")],
   'react.drawer.open': [c('It sticks. You have to lift and— I imagine.'), c("Cats don't use drawers.")],
   'react.shelf.solved': [c("Hidden bookcase. How dramatic. He's a very dramatic man."), c('Handsome, too. One hears.')],
   'react.shelf.wrong': [
     [c('Not that one. Unless you enjoy the thunk.')],
-    [c('Wrong book. Did you look at the chair? Properly? With your nose almost on it?')],
+    [c("Wrong book. You're treating this as a lucky dip. The shelf would like you to know it isn't.")],
     [c('Every time you get it wrong, a librarian somewhere sighs.')],
   ],
   'react.grimoire.solved': [c('Bean.'), c('…Yes. Well. Bean was a good cat. Terrible at magic. Moving on.')],
   'react.grimoire.wrong': [
     [c("No. He'd never use that. Unless he was very tired.")],
-    [c('Four letters he loved. That is not a word he loved. I assume.')],
+    [c("Four letters. That's not it. I've no idea what it is, naturally. But it isn't that.")],
     [c("It's not his name. Too obvious. Even he knew that.")],
   ],
   'react.labdoor.open': [c('Oh good. The laboratory.'), c("Try not to touch anything that's humming.")],
@@ -201,7 +239,7 @@ export const script = {
   'react.scale.solved': [c('Seven. He always said seven was the only honest number.'), c('He said a lot of things.')],
   'react.scale.wrong': [
     [c('The owl remains unimpressed. So do I.')],
-    [c('Seven. Not "roughly seven". The owl can tell.')],
+    [c("The owl can tell. The owl can always tell. It's why nobody likes the owl.")],
     [c("Too much. If you're going to use the eight, I'll need to lie down.")],
   ],
   'react.cauldron.solved': [c('Up the stairs.'), c('Mind the eleventh step. It is… decorative.')],
@@ -219,8 +257,8 @@ export const script = {
   'react.rite.solved': [c('Five for five. The circle is ready.'), c("Shame there's no one to put in it.")],
   'react.rite.wrong': [
     [c('And they all go out. The candles have opinions about order.')],
-    [c('Dawn comes from the east. Every morning. Without fail. Not that I get up for it.')],
-    [c('"The lectern\'s neighbour first." The candle by the lectern. Where you are standing, more or less.')],
+    [c("They all went out at once. That isn't sulking. That's a verdict.")],
+    [c('Five candles, five opinions, and all of them currently about you.')],
   ],
   'react.lure.solved': [c('Mm.'), c('…Mm.')],
   'react.lure.beat1': [c('This is beneath me.')],
@@ -229,6 +267,33 @@ export const script = {
   // Item interactions
   'react.parcel.open': [c('The seal is warded.'), c('Also, it would be rude.')],
   'react.parcel.cat': [c("Not now. I'm working."), c('…Leave it on the desk.')],
+  'react.key.cat': [c('That is a key. I am a cat.'), c('It opens the desk drawer. In the study. Try the drawer.')], // ADDED BY loose-ends pass (rooms 2–3)
+  // Loose ends — said once by the cat in rooms 2 and 3 when something the ending needs was left in the study
+  // (Room.looseEnd → Hints). key: brass key still carried. desk: drawer locked, no key. tin: drawer open, tin left.
+  'react.loose.key.room2': [
+    c("You're still carrying that key. It jingles."),
+    c("It opens the desk drawer. In the study. I'm told. Cats don't use drawers."),
+  ],
+  'react.loose.key.room3': [
+    c('That brass key. Still in your pocket. Still not in the study desk.'),
+    c('I only mention it because the last chore has a very specific appetite.'),
+  ],
+  'react.loose.desk.room2': [
+    c("There's a desk in the study with a drawer you never opened."),
+    c('The clock would know where the key is. Clocks are like that.'),
+  ],
+  'react.loose.desk.room3': [
+    c('The study desk. Locked drawer. You never did get into it.'),
+    c('Set the clock to what the portrait says and it will cough up a key. Allegedly.'),
+  ],
+  'react.loose.tin.room2': [
+    c('You opened the desk and left the tin in it.'),
+    c("I'm not saying that was a mistake. I'm an ordinary cat. I don't have opinions about tins."),
+  ],
+  'react.loose.tin.room3': [
+    c('The tin. In the study desk. You left it there.'),
+    c("Not that I've been thinking about it. Constantly."),
+  ],
   'react.sardines.cat': [
     [c('Not now.'), c('…Is that oil-packed? Not now.')],
     [c("I said not now. I'm an ordinary cat with ordinary self-control."), c('Put it away before I lose it.')],
@@ -425,7 +490,8 @@ export const script = {
     'The Greater Spoon. Smaller than the Lesser one.',
     'The Accountant.',
   ],
-  'caption.candle.unlit': 'An unlit candle. It waits for its turn, politely.',
+  'caption.candle.unlit': 'An unlit candle. It waits for the words. The lectern lies open, and empty.',
+  'caption.candle.dry': 'An unlit candle. The elixir first. The bowl at the heart of the rose is dry.',
   'caption.lectern.closed': 'A lectern, its cover shut. It wants the heavens in order first.',
   'caption.circle.unready': 'A ritual circle. Dark, for now. It is waiting for something.',
 

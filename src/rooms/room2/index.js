@@ -534,6 +534,17 @@ export default class Room2 extends Room {
     return true;
   }
 
+  /** Hints: a remark about something left behind in the study (the key, the locked drawer, the tin) — the ending
+   *  needs the sardines, and nothing else in rooms 2–3 would ever mention them. Mirrors room3.looseEnd. */
+  looseEnd() {
+    const { state, inventory } = this.ctx;
+    if (state.isSolved('lure')) return null;
+    if (inventory.has('key_brass')) return 'react.loose.key.room2';
+    if (!state.isSolved('desk')) return 'react.loose.desk.room2';
+    if (!inventory.has('sardines')) return 'react.loose.tin.room2';
+    return null;
+  }
+
   // ------------------------------------------------------------------------------------------- lifecycle
   _placeCat() {
     const { ctx } = this;
@@ -549,6 +560,7 @@ export default class Room2 extends Room {
             ctx.dialogue.say(Array.isArray(pool) && Array.isArray(pool[0]) ? pool[Math.min(seen, pool.length - 1)] : 'react.sardines.cat');
           },
           parcel: () => ctx.dialogue.say('react.parcel.cat'),
+          key_brass: () => { ctx.cat.react?.('earFlickL'); ctx.dialogue.say('react.key.cat'); },
         },
       },
     });

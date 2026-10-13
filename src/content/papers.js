@@ -45,7 +45,8 @@ export const papers = {
     title: 'The Rite of Reversion',
     style: 'page',
     body:
-      'Light the five as the Rite demands:\n' +
+      'Fill the bowl at the heart of the rose,\n' +
+      'then light the five as the Rite demands:\n' +
       'first the flame that greets the dawn,\n' +
       'then its shadow, straight across;\n' +
       'then the one the north wind touches,\n' +

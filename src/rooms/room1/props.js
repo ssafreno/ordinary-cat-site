@@ -883,8 +883,8 @@ function incantationTexture() {
   g.strokeStyle = '#7a2a1a'; g.lineWidth = 3; g.beginPath();
   for (let i = 0; i <= 5; i++) { const a = (i * 2 / 5) * TAU - Math.PI / 2; const x = W / 2 + Math.cos(a) * 110, y = 360 + Math.sin(a) * 110; i ? g.lineTo(x, y) : g.moveTo(x, y); }
   g.stroke(); g.beginPath(); g.arc(W / 2, 360, 120, 0, TAU); g.stroke();
-  g.font = `italic 600 22px ${SERIF}`; g.fillStyle = '#4a1a0a';
-  ['Light the five as the Rite demands…', "…the lectern's neighbour first, then the last."].forEach((t, i) => g.fillText(t, W / 2, 530 + i * 34, W - 90));
+  g.font = `italic 600 21px ${SERIF}`; g.fillStyle = '#4a1a0a';
+  ['Fill the bowl at the heart of the rose,', 'then light the five as the Rite demands…', "…the lectern's neighbour first, then the last."].forEach((t, i) => g.fillText(t, W / 2, 516 + i * 30, W - 90));
   return canvasTexture(c);
 }
 

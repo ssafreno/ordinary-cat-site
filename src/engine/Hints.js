@@ -4,10 +4,13 @@
 //  1. If the room intro hasn't been seen (`<roomId>.intro.seen`) → say `<roomId>.intro`, mark seen.
 //  2. "Too early" (in room < 20 s AND < 2 hotspot clicks this visit) → say `early.<roomId>` if present,
 //     else falls through to the hint below (the intro is never replayed).
-//  3. current puzzle = first id in Room.puzzleOrder that is not solved and room.prereqMet(id).
+//  3. Loose end: if room.looseEnd() returns a script key (something left behind in an earlier room that this
+//     room or the ending will need — the study key / drawer / sardines), say it once per save, then stop.
+//  4. current puzzle = first id in Room.puzzleOrder that is not solved and room.prereqMet(id).
 //     level = state `hint.<id>.level` (0..). Levels 1→2→3, then alternate idle line / level 3.
-//     Says `hint.<id>.<n>`; missing keys fall back to idle.
-//  4. Everything solved (or no current puzzle) → say `idle.<roomId>` (random line-array).
+//     Says `hint.<id>.<n>`; if room.hintVariant(id) returns a suffix and `hint.<id>.<suffix>.<n>` exists, that
+//     line is used instead (e.g. lure hints that send the player back for the sardines). Missing keys → idle.
+//  5. Everything solved (or no current puzzle) → say `idle.<roomId>` (random line-array).
 
 export class Hints {
   constructor(ctx) {
@@ -76,12 +79,26 @@ export class Hints {
         if (this._has(`early.${rid}`)) { await dialogue.say(`early.${rid}`); return; }
         // QA: no longer replays the intro (it already auto-played on entry); fall through to a real hint
       }
+      // something left behind in an earlier room (the study key, the locked drawer, the tin) — said once
+      let loose = null;
+      try { loose = room.looseEnd?.() || null; } catch (e) { console.error(e); }
+      if (loose && this._has(loose) && !state.get(`loose.${loose}.said`)) {
+        state.set(`loose.${loose}.said`, true);
+        await dialogue.say(loose);
+        return;
+      }
       const pid = this.currentPuzzle(room);
       if (pid) {
         const level = state.get(`hint.${pid}.level`, 0);
+        let variant = null;
+        try { variant = room.hintVariant?.(pid) || null; } catch (e) { console.error(e); }
+        const pick = (n) => {
+          const vk = variant ? `hint.${pid}.${variant}.${n}` : null;
+          return vk && this._has(vk) ? vk : `hint.${pid}.${n}`;
+        };
         let key;
-        if (level < 3) key = `hint.${pid}.${level + 1}`;
-        else key = level % 2 === 1 && this._has(`idle.${rid}`) ? `idle.${rid}` : `hint.${pid}.3`;
+        if (level < 3) key = pick(level + 1);
+        else key = level % 2 === 1 && this._has(`idle.${rid}`) ? `idle.${rid}` : pick(3);
         state.set(`hint.${pid}.level`, level + 1);
         if (this._has(key)) { await dialogue.say(key); return; }
       }

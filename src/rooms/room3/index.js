@@ -46,6 +46,25 @@ export default class Room3 extends Room {
     return true;
   }
 
+  /** Hints: a remark about something left behind in the study (the key, the locked drawer, the tin). Mirrors room2.looseEnd. */
+  looseEnd() {
+    const { state, inventory } = this.ctx;
+    if (state.isSolved('lure')) return null;
+    if (inventory.has('key_brass')) return 'react.loose.key.room3';
+    if (!state.isSolved('desk')) return 'react.loose.desk.room3';
+    if (!inventory.has('sardines')) return 'react.loose.tin.room3';
+    return null;
+  }
+
+  /** Hints: the lure hints assume the player carries the sardines. If not, use the variant that sends them back. */
+  hintVariant(id) {
+    if (id !== 'lure') return null;
+    const { state, inventory } = this.ctx;
+    if (inventory.has('sardines')) return null;
+    if (state.isSolved('desk')) return 'notin';           // drawer open, tin left in it
+    return inventory.has('key_brass') ? 'nodesk' : 'nokey'; // drawer locked: has the key / never got it
+  }
+
   // ===========================================================================================
   async build() {
     const { ctx } = this;
@@ -693,8 +712,10 @@ export default class Room3 extends Room {
     const cd = this.candles[k];
     if (state.isSolved('rite') || cd.userData.lit) { dialogue.caption('caption.candle.lit'); return; }
     if (!this._riteReady()) {
+      // say which prerequisite is missing, so a refusal never reads as a wrong-order problem
       if (!state.isSolved('orrery')) dialogue.caption('caption.circle.unready');
-      else dialogue.caption('caption.candle.unlit');
+      else if (!state.get('room3.page.placed')) dialogue.caption('caption.candle.unlit');
+      else dialogue.caption('caption.candle.dry');
       return;
     }
     const lit = state.get('room3.candles', []);
@@ -873,6 +894,7 @@ export default class Room3 extends Room {
       useItem: {
         sardines: () => this._catSardines(),
         parcel: () => { ctx.dialogue.say('react.parcel.cat'); return false; },
+        key_brass: () => { ctx.cat.react?.('earFlickL'); ctx.dialogue.say('react.key.cat'); },
       },
     };
     if (state.isSolved('lure')) {
