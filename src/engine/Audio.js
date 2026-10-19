@@ -6,6 +6,7 @@
 //   one-shots ─▶ sfxBus ─┐
 //   loops ─────▶ ambBus ─┼─▶ master(mute) ─▶ glue comp ─▶ limiter ─▶ soft-clip ─▶ meter ─▶ out
 //   (sends) ───▶ reverb ─┘
+//   master = volume (0..1, HUD slider) × mute (0/1, ?mute flag / dev page)
 //
 // The AudioContext is created lazily in resume() (first user gesture). Calls made
 // before that are safe no-ops, except loop()/setRoomAmbience()/setClockRunning(),
@@ -37,6 +38,7 @@ export class AudioEngine {
   constructor() {
     this.ctx = null;
     this.muted = false;
+    this.volume = 1;
     this._warned = new Set();
     this._loops = new Map();   // name -> live instance
     this._wanted = new Map();  // name -> gain (desired loop state, kept before resume)
@@ -75,7 +77,7 @@ export class AudioEngine {
 
     // master chain
     this._master = ctx.createGain();
-    this._master.gain.value = this.muted ? 0 : 1;
+    this._master.gain.value = this._masterLevel();
 
     const glue = ctx.createDynamicsCompressor();
     glue.threshold.value = -20; glue.knee.value = 12; glue.ratio.value = 2.5;
@@ -421,15 +423,30 @@ export class AudioEngine {
     }
   }
 
-  // ───────────────────────────────────────────────────────── public: mute & metering
+  // ───────────────────────────────────────────────────────── public: volume, mute & metering
 
-  setMuted(b) {
-    this.muted = !!b;
+  _masterLevel() { return this.muted ? 0 : this.volume; }
+
+  _applyMaster() {
     if (!this.ctx) return;
     const p = this._master.gain, t = this.ctx.currentTime;
     p.cancelScheduledValues(t);
     p.setValueAtTime(p.value, t);
-    p.setTargetAtTime(this.muted ? 0 : 1, t, 0.08);
+    p.setTargetAtTime(this._masterLevel(), t, 0.08);
+  }
+
+  /** Master volume 0..1 (the HUD slider). Perceptual curve: the slider's midpoint is about half as loud. */
+  setVolume(v) {
+    v = Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 1;
+    this.volume = v * v;
+    this._applyMaster();
+  }
+  /** The slider position (0..1) that corresponds to the current volume. */
+  getVolume() { return Math.sqrt(this.volume); }
+
+  setMuted(b) {
+    this.muted = !!b;
+    this._applyMaster();
   }
 
   /** Peak absolute sample level at the output over the last ~45ms (post-limiter). */

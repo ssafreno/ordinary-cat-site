@@ -1,4 +1,4 @@
-// HUD: top-right menu (mute / fullscreen / restart), top-left timer, Back button for focus views, toasts, dev fps.
+// HUD: top-right menu (volume / fullscreen / restart), top-left timer, Back button for focus views, toasts, dev fps.
 
 const ICON = {
   sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" fill-opacity=".2"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
@@ -23,11 +23,26 @@ export class HUD {
 
     this.menu = document.createElement('div');
     this.menu.className = 'oc-menu';
-    this.muteBtn = this._btn(ICON.sound, 'Mute', () => this.toggleMute());
+    this.soundBtn = this._btn(ICON.sound, 'Volume', () => this.toggleVolume());
+    this.soundBtn.setAttribute('aria-haspopup', 'true');
+    this.soundBtn.setAttribute('aria-expanded', 'false');
     this.fullBtn = this._btn(ICON.full, 'Fullscreen', () => this.toggleFullscreen());
     this.restartBtn = this._btn(ICON.restart, 'Restart', () => this.confirmRestart());
-    this.menu.append(this.muteBtn, this.fullBtn, this.restartBtn);
+    this.menu.append(this.soundBtn, this.fullBtn, this.restartBtn);
     ui.appendChild(this.menu);
+
+    // volume popover: a brass slider under the speaker button
+    this.volumeEl = document.createElement('div');
+    this.volumeEl.className = 'oc-volume oc-hidden';
+    this.volumeEl.innerHTML = `<label><span class="oc-volume-label">Volume</span>
+      <input type="range" min="0" max="100" step="1" value="100" aria-label="Volume"></label>`;
+    this.volumeInput = this.volumeEl.querySelector('input');
+    this.volumeEl.addEventListener('pointerdown', (e) => e.stopPropagation());
+    this.volumeInput.addEventListener('input', () => this.setVolume(this.volumeInput.value / 100));
+    this.volumeInput.addEventListener('change', () => this.ctx.audio?.play('click', { gain: 0.5 }));
+    this.volumeInput.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); this.showVolume(false); this.soundBtn.focus(); } });
+    ui.appendChild(this.volumeEl);
+    document.addEventListener('pointerdown', (e) => { if (this.volumeOpen && !this.volumeEl.contains(e.target) && !this.soundBtn.contains(e.target)) this.showVolume(false); });
 
     this.timer = document.createElement('div');
     this.timer.className = 'oc-timer';
@@ -70,18 +85,31 @@ export class HUD {
     this.visible = b;
     this.menu.classList.toggle('oc-hud-hidden', !b);
     this.timer.classList.toggle('oc-hud-hidden', !b);
-    if (!b) this.showBack(false);
+    if (!b) { this.showBack(false); this.showVolume(false); }
   }
 
   showBack(b) { this.back.classList.toggle('oc-hidden', !b); }
 
-  toggleMute() {
-    const a = this.ctx.audio;
-    a.setMuted(!a.muted);
-    try { localStorage.setItem('ordinary-cat.muted', a.muted ? '1' : '0'); } catch (e) { /* ignore */ }
-    this.syncMute();
+  toggleVolume() { this.showVolume(!this.volumeOpen); }
+  showVolume(b) {
+    this.volumeOpen = !!b;
+    this.volumeEl.classList.toggle('oc-hidden', !b);
+    this.soundBtn.setAttribute('aria-expanded', b ? 'true' : 'false');
+    if (b) { this.syncVolume(); this.volumeInput.focus({ preventScroll: true }); }
   }
-  syncMute() { this.muteBtn.innerHTML = this.ctx.audio?.muted ? ICON.muted : ICON.sound; }
+  /** v is the slider position 0..1. Persisted; the icon goes quiet at zero. */
+  setVolume(v) {
+    const a = this.ctx.audio;
+    a.setVolume(v);
+    try { localStorage.setItem('ordinary-cat.volume', String(v)); localStorage.removeItem('ordinary-cat.muted'); } catch (e) { /* ignore */ }
+    this.syncVolume();
+  }
+  syncVolume() {
+    const a = this.ctx.audio, v = a ? a.getVolume() : 1;
+    this.volumeInput.value = String(Math.round(v * 100));
+    this.volumeInput.style.setProperty('--v', `${Math.round(v * 100)}%`);
+    this.soundBtn.innerHTML = (!a || a.muted || v <= 0) ? ICON.muted : ICON.sound;
+  }
 
   toggleFullscreen() {
     if (document.fullscreenElement) document.exitFullscreen?.();

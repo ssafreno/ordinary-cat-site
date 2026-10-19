@@ -136,7 +136,12 @@ export class Game {
     };
     this.ctx = ctx;
     ctx.audio = new AudioEngine();
-    try { if (localStorage.getItem('ordinary-cat.muted') === '1' || this.flags.mute) ctx.audio.setMuted(true); } catch (e) { /* ignore */ }
+    try {
+      const v = localStorage.getItem('ordinary-cat.volume');
+      if (v !== null) ctx.audio.setVolume(parseFloat(v));
+      else if (localStorage.getItem('ordinary-cat.muted') === '1') ctx.audio.setVolume(0); // pre-slider saves
+      if (this.flags.mute) ctx.audio.setMuted(true);
+    } catch (e) { /* ignore */ }
     ctx.transitions = new Transitions(ctx);
     ctx.transitions.cover();
     ctx.hud = new HUD(ctx);
@@ -149,7 +154,7 @@ export class Game {
     ctx.hints = new Hints(ctx);
     ctx.title = new Title(ctx);
     ctx.cat = new Cat(ctx);
-    ctx.hud.syncMute();
+    ctx.hud.syncVolume();
     if (this.dev) ctx.hud.enableFps();
 
     renderer.setScene(scene, ctx.camera.camera);
@@ -283,6 +288,8 @@ export class Game {
     }
     await ctx.transitions.fadeOut(0.8);
     ctx.title.hide();
+    // New Game: the "courier instructions" card over black, so the player knows why they are walking in
+    if (act === 'new') await ctx.title.prelude(ctx.script?.['prelude.note']);
     ctx.camera.autoPan = null;
     ctx.camera.enabled = true;
     ctx.hotspots.enabled = true;

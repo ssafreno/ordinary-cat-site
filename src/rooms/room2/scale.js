@@ -246,6 +246,6 @@ export function buildDrawers(room, { position }) {
   // a little whimsy inside the other drawers
   const chalk = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.05, 8), M.matte('#f0f0e8')); chalk.rotation.z = Math.PI / 2; chalk.position.set(-0.06, 0.006, 0.02); drawers[0].interior.add(chalk);
   const button = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.004, 14), M.brass()); button.position.set(0.05, 0.003, 0.03); drawers[0].interior.add(button);
-  const string = new THREE.Mesh(new THREE.TorusGeometry(0.03, 0.002, 6, 20), M.matte('#b0a080')); string.rotation.x = Math.PI / 2; string.position.set(0.0, 0.002, 0.02); drawers[2].interior.add(string);
+  // (the sundries drawer is bare on purpose: a loop of string in here kept reading as something to click)
   return { root, drawers };
 }

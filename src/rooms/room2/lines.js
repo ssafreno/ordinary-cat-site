@@ -14,7 +14,7 @@ export const R2_LINES = {
   'caption.r2.case.open': 'The case stands open. The velvet keeps a jar-shaped dent.',
   'caption.r2.drawer.odds': 'A stub of chalk and a brass button. Odds.',
   'caption.r2.drawer.ends': 'Something small and brass rolls to the front of the drawer.',
-  'caption.r2.drawer.sundries': 'A loop of string. Somebody was saving it. Possibly for batting.',
+  'caption.r2.drawer.sundries': 'Sundries, the label says. Dust, the drawer says.',
   'caption.r2.drawer.empty': 'Nothing else in here.',
   'caption.r2.cauldron.base': 'A clear base, simmering. It smells of possibility and old pennies.',
   'caption.r2.cauldron.partial': 'It simmers, waiting for the rest of the recipe.',

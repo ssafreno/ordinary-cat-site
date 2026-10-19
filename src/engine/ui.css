@@ -235,6 +235,35 @@ button { font: inherit; color: inherit; }
 }
 .oc-iconbtn:hover { transform: translateY(-1px); color: #fff1c8; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--brass); }
 .oc-iconbtn svg { width: 18px; height: 18px; }
+.oc-volume {
+  position: fixed; top: calc(max(14px, env(safe-area-inset-top)) + 48px); right: 14px; z-index: 5;
+  padding: 10px 14px 11px; border-radius: 14px;
+  background: linear-gradient(180deg, var(--walnut-3), var(--walnut)); border: 1px solid rgba(201, 162, 74, 0.55);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45); transition: opacity 0.15s, transform 0.15s;
+}
+.oc-volume.oc-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
+.oc-volume label { display: flex; align-items: center; gap: 12px; }
+.oc-volume-label { font: 500 11px var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240, 227, 196, 0.75); }
+.oc-volume input[type="range"] {
+  --v: 100%; -webkit-appearance: none; appearance: none; width: 140px; height: 24px; margin: 0; background: transparent; cursor: pointer;
+}
+.oc-volume input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--brass) var(--v), rgba(201, 162, 74, 0.25) var(--v));
+}
+.oc-volume input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: rgba(201, 162, 74, 0.25); }
+.oc-volume input[type="range"]::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--brass); }
+.oc-volume input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px; margin-top: -6px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff1c8, var(--brass-hi) 40%, #8a6a2a); border: 1px solid #5a4218; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.oc-volume input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff1c8, var(--brass-hi) 40%, #8a6a2a); border: 1px solid #5a4218; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.oc-volume input[type="range"]:focus-visible { outline: none; }
+.oc-volume input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(236, 208, 138, 0.45), 0 2px 6px rgba(0, 0, 0, 0.5); }
+.oc-volume input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px rgba(236, 208, 138, 0.45), 0 2px 6px rgba(0, 0, 0, 0.5); }
 .oc-back {
   position: fixed; left: 50%; top: max(16px, env(safe-area-inset-top)); transform: translateX(-50%);
   padding: 8px 18px 9px 14px; border-radius: 999px; cursor: pointer; display: flex; align-items: center; gap: 8px;
@@ -303,6 +332,63 @@ button { font: inherit; color: inherit; }
 .oc-title-btn:disabled { opacity: 0.35; cursor: default; transform: none; }
 .oc-title-foot { position: absolute; bottom: 22px; font: 500 11px var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(240, 227, 196, 0.4); }
 @keyframes oc-title-in { from { opacity: 0; transform: translateY(14px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* ---------- prelude note (after New Game, over the black fade): a courier docket on parchment ---------- */
+.oc-prelude {
+  position: fixed; inset: 0; z-index: 95; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 22px; padding: 16px; background: #000; cursor: pointer; opacity: 0; transition: opacity 0.6s ease;
+}
+.oc-prelude.oc-shown { opacity: 1; }
+.oc-prelude.oc-hidden { opacity: 0; pointer-events: none; }
+.oc-prelude-sheet {
+  position: relative; width: min(520px, 100%); max-height: calc(100vh - 80px); overflow: auto;
+  padding: clamp(22px, 5vw, 34px) clamp(22px, 5.5vw, 40px) clamp(22px, 5vw, 30px);
+  color: var(--ink); background: var(--parchment-bg); border-radius: 2px; text-align: left; cursor: default;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.75), 0 6px 14px rgba(0, 0, 0, 0.6), inset 0 0 60px rgba(120, 75, 25, 0.35), inset 0 0 5px rgba(80, 50, 20, 0.45);
+  transform: rotate(-1.4deg) translateY(10px); transition: transform 0.6s cubic-bezier(.2, .8, .3, 1.1);
+}
+.oc-prelude.oc-shown .oc-prelude-sheet { transform: rotate(-1.4deg); }
+/* folded-over corner, top right */
+.oc-prelude-sheet::after {
+  content: ''; position: absolute; top: 0; right: 0; width: 26px; height: 26px; pointer-events: none;
+  background: linear-gradient(225deg, #000 0 50%, rgba(120, 85, 40, 0.55) 50%, var(--parch-2) 70%, rgba(255, 250, 235, 0.9));
+  box-shadow: -2px 2px 4px rgba(60, 35, 10, 0.25);
+}
+.oc-prelude-head { text-align: center; }
+.oc-prelude-firm { font: 700 clamp(19px, 5vw, 24px)/1.1 var(--serif); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
+.oc-prelude-trade { margin-top: 5px; font: 600 clamp(10px, 2.6vw, 11px) var(--sans); letter-spacing: 0.34em; text-transform: uppercase; color: #8a5a22; }
+.oc-prelude-rule { display: flex; align-items: center; gap: 10px; margin: 14px 0 16px; color: #7a2a1a; font: 500 16px/1 var(--serif); }
+.oc-prelude-rule::before, .oc-prelude-rule::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(90, 60, 30, 0.55), transparent); }
+.oc-prelude-titlerow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.oc-prelude-titlerow h2 { margin: 0; font: italic 600 clamp(24px, 6vw, 30px)/1.1 var(--serif); color: var(--ink); }
+.oc-prelude-ref { font: 500 11px var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(60, 40, 25, 0.55); }
+.oc-prelude-rows { display: grid; grid-template-columns: max-content 1fr; column-gap: 16px; row-gap: 7px; margin: 0; align-items: baseline; }
+.oc-prelude-rows dt { font: 600 11px var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: #8a5a22; padding-top: 4px; }
+.oc-prelude-rows dd { margin: 0; font: 500 clamp(17px, 4.4vw, 21px)/1.3 var(--serif); color: var(--ink); border-bottom: 1px dotted rgba(90, 60, 30, 0.35); padding-bottom: 3px; }
+.oc-prelude-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 16px; min-height: 40px; }
+.oc-prelude-foot > :only-child { margin-inline: auto; } /* stamp alone (no scrawl) sits centred */
+.oc-prelude-scrawl {
+  margin-left: 2px; font: italic 500 clamp(17px, 4.4vw, 20px)/1.25 var(--serif); color: #2b2a4a;
+  transform: rotate(-2.5deg); transform-origin: left center;
+}
+.oc-prelude-stamp {
+  flex: 0 0 auto; padding: 6px 11px 7px; margin-right: 4px; pointer-events: none;
+  border: 2px double rgba(154, 42, 26, 0.7); border-radius: 3px; color: rgba(154, 42, 26, 0.72);
+  font: 700 clamp(9.5px, 2.5vw, 11px)/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap;
+  transform: rotate(-7deg); mix-blend-mode: multiply; opacity: 0.9;
+  box-shadow: inset 0 0 6px rgba(154, 42, 26, 0.18);
+}
+.oc-prelude-btn {
+  display: block; margin: 22px auto 0; min-width: 180px; padding: 11px 26px 12px; border-radius: 5px; cursor: pointer;
+  font: 600 20px var(--serif); letter-spacing: 0.04em; color: var(--parch);
+  background: linear-gradient(180deg, var(--walnut-3), var(--walnut-2));
+  border: 1px solid rgba(201, 162, 74, 0.55); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 220, 160, 0.12);
+  transition: transform 0.12s, box-shadow 0.12s, background 0.2s;
+}
+.oc-prelude-btn::after { content: ' ❧'; color: var(--brass); }
+.oc-prelude-btn:hover, .oc-prelude-btn:focus-visible { transform: translateY(-2px); background: linear-gradient(180deg, #5a3d29, var(--walnut-3)); box-shadow: 0 7px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--brass); outline: none; }
+.oc-prelude-hint { font: 500 11px var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(240, 227, 196, 0.4); text-align: center; }
+@media (prefers-reduced-motion: reduce) { .oc-prelude, .oc-prelude-sheet { transition: none; } }
 
 /* ---------- transitions ---------- */
 .oc-fade { position: fixed; inset: 0; z-index: 90; opacity: 0; pointer-events: none !important; background: #000; }

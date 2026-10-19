@@ -1309,6 +1309,7 @@ export default class Room1 extends Room {
     // (the parcel is seeded into the inventory by the engine on New Game / ?room=)
     if (!state.get('room1.intro.seen')) {
       state.set('room1.intro.seen', true);
+      ctx.inventory.hold('parcel'); // hidden until it flies in during the intro
       this._introSequence();
     } else if (!state.get('room1.thumbs.done') && from == null) {
       this._later(1.0, () => this._offerThumbs());
@@ -1319,6 +1320,10 @@ export default class Room1 extends Room {
     const { ctx } = this;
     this.frontDoor.userData.setRune(0);
     await ctx.tween.delay(0.7);
+    if (!this._isCurrent()) return;
+    // the parcel (seeded silently by Game.js, held hidden in enter()) flies into the bar, then the door shuts
+    ctx.inventory.flourish('parcel');
+    await ctx.tween.delay(1.5);
     if (!this._isCurrent()) return;
     ctx.audio.play('drop', { gain: 1.1, pitch: 0.6 });
     ctx.audio.play('zap', { gain: 0.3 });

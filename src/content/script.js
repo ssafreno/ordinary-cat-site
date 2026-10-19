@@ -22,6 +22,21 @@ export const script = {
   ],
 
   // ─────────────────────────────────────────────── ROOM 1 — THE STUDY
+  // Prelude note over black after New Game (playtest: nobody knew they were a courier): the delivery docket the
+  // courier was handed. Stays until clicked / any key. Then the parcel flies into the bar and the door shuts.
+  'prelude.note': {
+    firm: 'Pennywhistle & Daughters',
+    trade: 'Arcane Deliveries',
+    heading: 'Courier instructions',
+    ref: 'Docket No. 417',
+    rows: [
+      ['To', 'Bartholomew Quince'],
+      ['At', 'The Tower'],
+    ],
+    stamp: 'Signature required',
+    button: 'Set off',
+    hint: 'Click anywhere or press any key',
+  },
   'room1.intro': [
     n('The door swings shut behind you. A rune flares across it, blue-white and smug.'),
     n('On the desk sits a cat.'),

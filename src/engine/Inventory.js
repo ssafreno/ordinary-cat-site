@@ -12,6 +12,7 @@ export class Inventory {
     this.selected = null;
     this._iconCache = new Map();
     this._slots = [];
+    this._held = new Set(); // slots kept invisible until flourish() (see hold)
 
     this.el = document.createElement('div');
     this.el.className = 'oc-inv oc-hidden';
@@ -125,6 +126,7 @@ export class Inventory {
         slot.addEventListener('dblclick', (e) => { e.preventDefault(); this.inspect(id); });
         slot.addEventListener('contextmenu', (e) => { e.preventDefault(); this.deselect(); });
       }
+      if (id && this._held.has(id)) slot.style.opacity = '0';
       this.el.appendChild(slot);
       this._slots.push(slot);
     }
@@ -146,6 +148,19 @@ export class Inventory {
     const cam = this.ctx.camera.camera;
     v.project(cam);
     return { x: (v.x * 0.5 + 0.5) * window.innerWidth, y: (-v.y * 0.5 + 0.5) * window.innerHeight };
+  }
+
+  /** Keep an item's slot invisible (it is in the bar, but not yet "arrived") until flourish(id) flies it in. */
+  hold(id) {
+    this._held.add(id);
+    for (const s of this._slots || []) if (s.dataset.id === id) s.style.opacity = '0';
+  }
+
+  /** Fly an item already in the bar into its slot (the parcel, seeded silently by Game.js, during the room1 intro). */
+  flourish(id, from) {
+    this._held.delete(id);
+    if (!this.has(id)) return;
+    this._flyIn(id, from);
   }
 
   _flyIn(id, fromRaw) {
