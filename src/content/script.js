@@ -281,7 +281,7 @@ export const script = {
 
   // Item interactions
   'react.parcel.open': [c('The seal is warded.'), c('Also, it would be rude.')],
-  'react.parcel.cat': [c("Not now. I'm working."), c('…Leave it on the desk.')],
+  'react.parcel.cat': [c("Not now. I'm working."), c("…And I can't sign for it. No thumbs.")], // said in all three rooms; must not suggest an action
   'react.key.cat': [c('That is a key. I am a cat.'), c('It opens the desk drawer. In the study. Try the drawer.')], // ADDED BY loose-ends pass (rooms 2–3)
   // Loose ends — said once by the cat in rooms 2 and 3 when something the ending needs was left in the study
   // (Room.looseEnd → Hints). key: brass key still carried. desk: drawer locked, no key. tin: drawer open, tin left.
